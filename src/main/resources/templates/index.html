@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Easy-Create</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+<div class="container">
+    <form action="/generate-project.zip" method="POST">
+        <div class="jumbotron">
+            <h1>
+                Easy-Create
+            </h1>
+            <p class="lead">
+                bootstrap your application now
+            </p>
+            <div class="form-inline">
+                <div class="form-group">
+                    <label for="buildTools">Generate a</label>
+                    <select class="form-control" id="buildTools" name="buildTools">
+                        <option value="Maven Project">Maven Project</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="programmingLanguage">with</label>
+                    <select class="form-control" id="programmingLanguage" name="programmingLanguage">
+                        <option value="Java">Java</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row marketing">
+            <div class="col-lg-6">
+                <h4>Project Metadata</h4>
+                <h6>Artifact coordinates</h6>
+                <div class="form-group">
+                    <label for="projectGroup">Project Group</label>
+                    <input type="text" class="form-control" id="projectGroup" th:value="${projectGroup}"
+                           name="projectGroup"/>
+                </div>
+                <div class="form-group">
+                    <label for="projectName">Project Name</label>
+                    <input type="text" class="form-control" id="projectName" th:value="${projectName}"
+                           name="projectName"/>
+                </div>
+                <div class="form-group">
+                    <label for="basePackage">Base Package</label>
+                    <input type="text" class="form-control" id="basePackage" name="basePackage" readonly="readonly"/>
+                </div>
+                <div class="form-group">
+                    <label for="projectStructure">Project Structure</label>
+                    <select class="form-control" id="projectStructure" name="projectStructure">
+                        <option value="Single">Single</option>
+                        <option value="Complex">Complex</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="packMethod">Pack Method</label>
+                    <select class="form-control" id="packMethod" name="packMethod">
+                        <option value="Assembly">Assembly</option>
+                        <option value="SpringBoot">SpringBoot</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h4>Dependencies</h4>
+                <h6>Add Spring Boot Starters and dependencies to your application</h6>
+                <div class="form-group">
+                    <label for="springBootVersion">Spring Boot Version</label>
+                    <select class="form-control" id="springBootVersion" name="springBootVersion">
+                        <option value="1.5.18.RELEASE">1.5.18.RELEASE</option>
+                        <option value="2.1.1.RELEASE">2.1.1.RELEASE</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="springCloudVersion">Spring Cloud Version</label>
+                    <input type="text" class="form-control" id="springCloudVersion" name="springCloudVersion"
+                           readonly="readonly"/>
+                </div>
+                <div class="form-group">
+                    <label for="searchDependencies">Search for dependencies</label>
+                    <input type="text" class="form-control" id="searchDependencies" name="searchDependencies"
+                           value="Coming soon..."
+                           readonly="readonly"/>
+                </div>
+                <div class="form-group">
+                    <label for="selectedDependencies">Selected Dependencies</label>
+                    <textarea rows="5" class="form-control" id="selectedDependencies" name="selectedDependencies"
+                              readonly="readonly"></textarea>
+                </div>
+            </div>
+            <div class="col-lg-12 text-center">
+                <button type="submit" class="btn btn-success" id="generateProject">Generate Project</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+</body>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<!--<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>-->
+<script src="js/jquery-1.11.3.min.js"></script>
+<!--<script src="js/jquery-1.11.3.min.js"></script>-->
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.min.js"></script>
+
+<script>
+
+    // Base Package
+    function basePackage() {
+        var projectGroup = $("#projectGroup").val();
+        var projectName = $("#projectName").val();
+        projectName = projectName.replace("-", "");
+        $("#basePackage").val(projectGroup + "." + projectName);
+    }
+
+    // Spring Cloud Version
+    function springBootVersion() {
+        var springBootVersion = $("#springBootVersion").val();
+        if (springBootVersion.match("^1.5.*")) {
+            $("#springCloudVersion").val("Edgware.SR5");
+        } else if (springBootVersion.match("^2.1.*")) {
+            $("#springCloudVersion").val("Greenwich.SR2");
+        }
+    }
+
+    $(document).ready(function () {
+        basePackage();
+        springBootVersion();
+    });
+
+    // Spring Cloud Version
+    $("#springBootVersion").change(function () {
+        springBootVersion();
+    });
+
+    // Base Package
+    $("#projectGroup").change(function () {
+        basePackage();
+    });
+    $("#projectName").change(function () {
+        basePackage();
+    });
+
+</script>
+
+</html>
