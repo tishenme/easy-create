@@ -19,7 +19,7 @@ public class FreemarkerUtils {
      * @param template Templete 实例
      * @param filePath 生成文件的路径
      * @param fileName 生成文件的名字
-     * @throws Exception 异常
+     * @throws Exception
      */
     public static void printFile(
             Map<String, Object> root,

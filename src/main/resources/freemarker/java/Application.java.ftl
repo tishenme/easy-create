@@ -6,8 +6,8 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 
 /**
-* @author easy-create
-*/
+ * @author easy-create
+ */
 @EnableFeignClients
 @EnableEurekaClient
 @SpringBootApplication
