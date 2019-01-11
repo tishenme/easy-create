@@ -40,7 +40,7 @@ public class ProjectController {
     public String index(
             Model model
     ) {
-        model.addAttribute("projectGroup", "com.iflytek");
+        model.addAttribute("projectGroup", "com.tishen");
         model.addAttribute("projectName", "demo");
         return "index";
     }

@@ -80,7 +80,7 @@
                     <label for="springBootVersion">Spring Boot Version</label>
                     <select class="form-control" id="springBootVersion" name="springBootVersion">
                         <option value="1.5.18.RELEASE">1.5.18.RELEASE</option>
-                        <option value="2.1.1.RELEASE">2.1.1.RELEASE</option>
+                        <option value="2.1.1.RELEASE">2.0.7.RELEASE</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -132,7 +132,7 @@
         if (springBootVersion.match("^1.5.*")) {
             $("#springCloudVersion").val("Edgware.SR5");
         } else if (springBootVersion.match("^2.1.*")) {
-            $("#springCloudVersion").val("Greenwich.SR2");
+            $("#springCloudVersion").val("Finchley SR2");
         }
     }
 

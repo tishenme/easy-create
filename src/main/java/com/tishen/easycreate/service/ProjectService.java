@@ -93,6 +93,119 @@ public class ProjectService {
         return zip;
     }
 
+    /**
+     * Maven Single
+     */
+    private void mavenSingleCreate(
+            Project project,
+            File projectDir
+    ) throws Exception {
+        // git
+        this.mavenGitCreate(project, projectDir);
+        // src
+        this.mavenSrcCreate(project, projectDir);
+        // pom
+        Map<String, Object> root = new HashMap<>(4);
+        root.put("projectName", project.getProjectName());
+        root.put("basePackage", project.getBasePackage().substring(0, project.getBasePackage().lastIndexOf(".")));
+        root.put("springBootVersion", project.getSpringBootVersion());
+        root.put("springCloudVersion", project.getSpringCloudVersion());
+        Template template = freeMarkerConfiguration.getTemplate("maven/pom-single.xml.ftl");
+        FreemarkerUtils.printFile(root, template, projectDir.getPath(), "pom.xml");
+        // application
+        this.mavenMainJavaCreate(project, projectDir);
+    }
+
+    /**
+     * Maven Complex
+     */
+    private void mavenComplexCreate(
+            Project project,
+            File projectDir
+    ) throws Exception {
+        // git
+        this.mavenGitCreate(project, projectDir);
+        // src
+        File apiDir = new File(projectDir, project.getProjectName() + "-api");
+        FileUtil.mkdir(apiDir);
+        this.mavenSrcCreate(project, apiDir);
+        File coreDir = new File(projectDir, project.getProjectName() + "-core");
+        FileUtil.mkdir(coreDir);
+        this.mavenSrcCreate(project, coreDir);
+        // pom
+        Map<String, Object> root = new HashMap<>(6);
+        root.put("projectName", project.getProjectName());
+        root.put("basePackage", project.getBasePackage().substring(0, project.getBasePackage().lastIndexOf(".")));
+        root.put("moudle_api", project.getProjectName() + "-api");
+        root.put("moudle_core", project.getProjectName() + "-core");
+        root.put("springBootVersion", project.getSpringBootVersion());
+        root.put("springCloudVersion", project.getSpringCloudVersion());
+        Template template = freeMarkerConfiguration.getTemplate("maven/pom-complex.xml.ftl");
+        FreemarkerUtils.printFile(root, template, projectDir.getPath(), "pom.xml");
+        // pom-api
+        template = freeMarkerConfiguration.getTemplate("maven/pom-complex-api.xml.ftl");
+        FreemarkerUtils.printFile(root, template, apiDir.getPath(), "pom.xml");
+        // pom-core
+        template = freeMarkerConfiguration.getTemplate("maven/pom-complex-core.xml.ftl");
+        FreemarkerUtils.printFile(root, template, coreDir.getPath(), "pom.xml");
+        // application
+        this.mavenMainJavaCreate(project, coreDir);
+    }
+
+    /**
+     * Maven Single Assembly
+     */
+    private void mavenAssemblyBaseOnSingleCreate(
+            Project project,
+            File projectDir
+    ) throws Exception {
+        // assembly
+        File mainPath = new File(projectDir, "src/main");
+        this.mavenAssemblyCreate(project, mainPath);
+        // resource
+        File resourcesPath = new File(projectDir, "src/main/resources");
+        this.mavenResourcesCreate(project, resourcesPath);
+    }
+
+    /**
+     * Maven Single SpringBoot
+     */
+    private void mavenSpringBootBaseOnSingleCreate(
+            Project project,
+            File projectDir
+    ) throws Exception {
+        // resource
+        File resourcesPath = new File(projectDir, "src/main/resources");
+        this.mavenResourcesCreate(project, resourcesPath);
+    }
+
+    /**
+     * Maven Complex Assembly
+     */
+    private void mavenAssemblyBaseOnComplexCreate(
+            Project project,
+            File projectDir
+    ) throws Exception {
+        // assembly
+        File MainPath = new File(projectDir, project.getProjectName() + "-core" + "/src/main");
+        this.mavenAssemblyCreate(project, MainPath);
+        // resource
+        File resourcesPath = new File(projectDir, project.getProjectName() + "-core" + "/src/main/resources");
+        this.mavenResourcesCreate(project, resourcesPath);
+    }
+
+    /**
+     * Maven Complex SpringBoot
+     */
+    private void mavenSpringBootBaseOnComplexCreate(
+            Project project,
+            File projectDir
+    ) throws Exception {
+        // resource
+        File resourcesPath = new File(projectDir, project.getProjectName() + "-core" + "/src/main/resources");
+        this.mavenResourcesCreate(project, resourcesPath);
+    }
+
     private void mavenGitCreate(
             Project project,
             File parentDir
@@ -218,101 +331,6 @@ public class ProjectService {
         template = freeMarkerConfiguration.getTemplate("java/Application.java.ftl");
         String basePackage = project.getBasePackage().replace(".", "/");
         FreemarkerUtils.printFile(root, template, parentDir.getPath() + "/src/main/java/" + basePackage, "Application.java");
-    }
-
-    private void mavenSingleCreate(
-            Project project,
-            File projectDir
-    ) throws Exception {
-        // git
-        this.mavenGitCreate(project, projectDir);
-        // src
-        this.mavenSrcCreate(project, projectDir);
-        // pom
-        Map<String, Object> root = new HashMap<>(4);
-        root.put("projectName", project.getProjectName());
-        root.put("basePackage", project.getBasePackage().substring(0, project.getBasePackage().lastIndexOf(".")));
-        root.put("springBootVersion", project.getSpringBootVersion());
-        root.put("springCloudVersion", project.getSpringCloudVersion());
-        Template template = freeMarkerConfiguration.getTemplate("maven/pom-single.xml.ftl");
-        FreemarkerUtils.printFile(root, template, projectDir.getPath(), "pom.xml");
-        // application
-        this.mavenMainJavaCreate(project, projectDir);
-    }
-
-    private void mavenComplexCreate(
-            Project project,
-            File projectDir
-    ) throws Exception {
-        // git
-        this.mavenGitCreate(project, projectDir);
-        // src
-        File apiDir = new File(projectDir, project.getProjectName() + "-api");
-        FileUtil.mkdir(apiDir);
-        this.mavenSrcCreate(project, apiDir);
-        File coreDir = new File(projectDir, project.getProjectName() + "-core");
-        FileUtil.mkdir(coreDir);
-        this.mavenSrcCreate(project, coreDir);
-        // pom
-        Map<String, Object> root = new HashMap<>(6);
-        root.put("projectName", project.getProjectName());
-        root.put("basePackage", project.getBasePackage().substring(0, project.getBasePackage().lastIndexOf(".")));
-        root.put("moudle_api", project.getProjectName() + "-api");
-        root.put("moudle_core", project.getProjectName() + "-core");
-        root.put("springBootVersion", project.getSpringBootVersion());
-        root.put("springCloudVersion", project.getSpringCloudVersion());
-        Template template = freeMarkerConfiguration.getTemplate("maven/pom-complex.xml.ftl");
-        FreemarkerUtils.printFile(root, template, projectDir.getPath(), "pom.xml");
-        // pom-api
-        template = freeMarkerConfiguration.getTemplate("maven/pom-complex-api.xml.ftl");
-        FreemarkerUtils.printFile(root, template, apiDir.getPath(), "pom.xml");
-        // pom-core
-        template = freeMarkerConfiguration.getTemplate("maven/pom-complex-core.xml.ftl");
-        FreemarkerUtils.printFile(root, template, coreDir.getPath(), "pom.xml");
-        // application
-        this.mavenMainJavaCreate(project, coreDir);
-    }
-
-    private void mavenAssemblyBaseOnSingleCreate(
-            Project project,
-            File projectDir
-    ) throws Exception {
-        // assembly
-        File mainPath = new File(projectDir, "src/main");
-        this.mavenAssemblyCreate(project, mainPath);
-        // resource
-        File resourcesPath = new File(projectDir, "src/main/resources");
-        this.mavenResourcesCreate(project, resourcesPath);
-    }
-
-    private void mavenSpringBootBaseOnSingleCreate(
-            Project project,
-            File projectDir
-    ) throws Exception {
-        // resource
-        File resourcesPath = new File(projectDir, "src/main/resources");
-        this.mavenResourcesCreate(project, resourcesPath);
-    }
-
-    private void mavenAssemblyBaseOnComplexCreate(
-            Project project,
-            File projectDir
-    ) throws Exception {
-        // assembly
-        File MainPath = new File(projectDir, project.getProjectName() + "-core" + "/src/main");
-        this.mavenAssemblyCreate(project, MainPath);
-        // resource
-        File resourcesPath = new File(projectDir, project.getProjectName() + "-core" + "/src/main/resources");
-        this.mavenResourcesCreate(project, resourcesPath);
-    }
-
-    private void mavenSpringBootBaseOnComplexCreate(
-            Project project,
-            File projectDir
-    ) throws Exception {
-        // resource
-        File resourcesPath = new File(projectDir, project.getProjectName() + "-core" + "/src/main/resources");
-        this.mavenResourcesCreate(project, resourcesPath);
     }
 
 }
